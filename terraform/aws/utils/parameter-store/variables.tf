@@ -11,8 +11,27 @@ variable "tags" {
 
 variable "parameter_read" {
   type        = list(string)
-  description = "List of parameters to read from SSM. These must already exist otherwise an error is returned. Can be used with `parameter_write` as long as the parameters are different."
+  description = <<-EOT
+  List of parameters to read from SSM.
+  These must already exist otherwise an error is returned.
+  Can be used with `parameter_write` as long as the parameters are different.
+  `parameter_read` is used if set and `parameter_read_map` ignored. Only use one or the other.
+  EOT
   default     = []
+}
+
+variable "parameter_read_map" {
+  type        = map(any)
+  description = <<-EOT
+  Map of parameters to read from SSM.
+  SSM Parameters as keys and shorthand name as values.
+  shorthand names will be used as the key in `map_decoded_bn` output for the SSM Parameter Values.
+  SSM Parameters must already exist otherwise an error is occurs.
+  Can be used with `parameter_write` as long as the parameters are different.
+  `parameter_read_map` is ignored if `parameter_read` is set. Only use one or the other.
+  Duplicate values in map are not permited since they will be used as key names in `map_decoded_bn`
+  EOT
+  default     = {}
 }
 
 variable "parameter_write" {

@@ -38,7 +38,7 @@ locals {
       )
     )
   )
-  basename_decoded_values = { for k, v in zipmap(local.name_list, local.value_list) : (try(basename(k), k)) => (try(jsondecode(v), tostring(v == var.empty_string_sub ? "" : v))) }
+  basename_decoded_values = { for k, v in zipmap(local.name_list, local.value_list) : lookup(local.parameter_read_map, k, "") => (try(jsondecode(v), tostring(v == var.empty_string_sub ? "" : v))) }
 }
 
 output "names" {
@@ -52,7 +52,11 @@ output "values" {
 }
 
 output "map_decoded_bn" {
-  description = "A map of the names and values created"
+  description = <<-EOT
+  A map of the names and values created.
+  Defaults to full parameter path for key and value if `parameter_read` list is provided.
+  Uses `parameter_read_map` values as the keys to SSM parameter values if `parameter_read` is not set.
+  EOT
   value       = local.basename_decoded_values
 }
 
