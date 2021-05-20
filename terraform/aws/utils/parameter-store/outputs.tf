@@ -38,7 +38,7 @@ locals {
       )
     )
   )
-  basename_decoded_values = { for k, v in zipmap(local.name_list, local.value_list) : lookup(local.parameter_read_map, k, "") => (try(jsondecode(v), tostring(v == var.empty_string_sub ? "" : v))) }
+  basename_decoded_values = { for k, v in zipmap(local.name_list, local.value_list) : (length(local.parameter_read_map) > 0 ? lookup(local.parameter_read_map, k, "") : k) => (try(jsondecode(v), tostring(v == var.empty_string_sub ? "" : v))) }
 }
 
 output "names" {
